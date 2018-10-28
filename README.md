@@ -64,8 +64,8 @@ Build _make targets_ of interest. Simply run `make` to get help. If you do not h
 
 Build make target `make run` like:
 
-    $ make run phonenumber=123456 operatordir=./data pattern='"*.operator"' loglevel=debug
-    $ make run phonenumber=123456 operatordir=./data
+    $ make run phonenumber=123456 operatordir=data pattern='"*.operator"' loglevel=debug
+    $ make run phonenumber=123456 operatordir=data
 
 > pattern='"*.operator"', note the quotes they are on purpose. We want "*.operator" by `make` to
 `cheap_caller.py`
@@ -76,8 +76,8 @@ Build make target `make run` like:
 
 Execute the `cheap_caller.py` script like:
 
-    $ python cheap_caller.py 123456 ./data -ll debug -p '*.operator'
-    $ python cheap_caller.py 123456 ./data
+    $ python cheap_caller.py 123456 data -ll debug -p '*.operator'
+    $ python cheap_caller.py 123456 data
 
 > -p '*.operator', note the quotes they are on purpose. we want pattern to pe passed undiluted,
 no shell expansion.

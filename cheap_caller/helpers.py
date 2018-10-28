@@ -91,6 +91,7 @@ def remove_leading_plus_and_zeros(string_to_be_curated):
 def gen_right_triangle(input_string):
     """Builds a list containing elements that builds right triangle
     12345 would be:
+
     12345
     1234
     123
@@ -132,7 +133,7 @@ def gen_find(filepat, top):
     """Find all files in a directory tree(recursively) matching a pattern
 
     Arguments:
-        filepat {str} -- pattern to match
+        filepat {str} -- file pattern to match
         top {str} -- path to start from
     """
     for path, _, filelist in os.walk(top):
@@ -186,7 +187,7 @@ def gen_lines(name, source):
         line_splitted[0] = remove_leading_plus_and_zeros(
             line_splitted[0]
         )
-        # strip the second part to remove any leading space
+        # lstrip the second part to remove any leading space
         line_splitted[1] = line_splitted[1].lstrip()
         try:
             [float(val) for val in line_splitted]
@@ -235,14 +236,15 @@ def get_cheapest_per_operator(dictseq, extensions):
         # adict represents an operator
         name = adict.get("name")
         # Have to use list() or we cant loop over each extension
-        lines = list(adict["source"])
+        lines = list(adict.get("source"))
         for extension in extensions:
             matching = [
                 line for line in lines if line[0] == extension
             ]
-            # since we start from phone number and work our way back
-            # to first digit, we can break if matching is non-empty
-            # and work with another operator dict data
+            # since we start from the phone number and work our way back
+            # to first digit, we can break if matching has values
+            # we record the minimum for that operator and
+            # move on to another operator.
             if matching:
                 LOGGER.debug(
                     "Matching lines for operator: %s, extension: %s, lines: %s",
