@@ -235,8 +235,21 @@ def get_cheapest_per_operator(dictseq, extensions):
     for adict in dictseq:
         # adict represents an operator
         name = adict.get("name")
+        # No need to have whole list in the memory
+        # first filter with the first digit in the phone number
+        lines = (
+            line for line in adict.get("source") if line[0].startswith(extensions[-1])
+        )
         # Have to use list() or we cant loop over each extension
-        lines = list(adict.get("source"))
+        lines = list(lines)
+        if not lines:
+            # If no lines found that startswith the first digit, we move on
+            # to next operator
+            LOGGER.debug(
+                "No lines matching the first digit: %s for %s,"
+                " continuing to next operator", extensions[-1], name
+            )
+            continue
         for extension in extensions:
             matching = [
                 line for line in lines if line[0] == extension
@@ -247,7 +260,8 @@ def get_cheapest_per_operator(dictseq, extensions):
             # move on to another operator.
             if matching:
                 LOGGER.debug(
-                    "Matching lines for operator: %s, extension: %s, lines: %s",
+                    "Longest matching lines for "
+                    "operator: %s, extension: %s, lines: %s",
                     name, extension, matching
                 )
                 # get the minimum value
