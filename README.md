@@ -14,7 +14,7 @@ Find the cheapest operator to call with for a given phone numer.
 
 > Any mention of __*make*__ here is a reference to __*GNU make*__.
 
-> An operator file is a _plain text file_ with __.operator__ extension containing __comma separated extension and price__.
+> An operator file is a _plain text file_ with __.operator__ extension containing __comma separated extension and price__. There are some files in the [data folder](./data)
 
 > __Name of the operator file is crucial__ and it should be __{*operator_name*}.operator__, this is how __CheapCaller knows of the operator name__.
 
@@ -65,6 +65,7 @@ Build _make targets_ of interest. Simply run `make` to get help. If you do not h
 Build make target `make run` like:
 
     $ make run phonenumber=123456 operatordir=data pattern='"*.operator"' loglevel=debug
+    $ make run phonenumber=123456 operatordir=data loglevel=info
     $ make run phonenumber=123456 operatordir=data
 
 > pattern='"*.operator"', note the quotes they are on purpose. We want "*.operator" by `make` to
@@ -77,12 +78,13 @@ Build make target `make run` like:
 Execute the `cheap_caller.py` script like:
 
     $ python cheap_caller.py 123456 data -ll debug -p '*.operator'
+    $ python cheap_caller.py 123456 data -ll info
     $ python cheap_caller.py 123456 data
 
 > -p '*.operator', note the quotes they are on purpose. we want pattern to pe passed undiluted,
 no shell expansion.
 
-> If executing `cheap_caller.py` or `generate_operator_data.py`scripts directly, you have to activate virtualenv by running: `. venv/bin/activate` and deactivate when done by simply typing `deactive` (__Note: activating and deactivating virtualenv is platform dependent, check virtualenv docs for more info__). It is assumed that all the dependencies have been installed.
+> If executing `cheap_caller.py` or `generate_operator_data.py`scripts directly, you have to activate virtualenv by running: `. venv/bin/activate` and deactivate when done by simply typing `deactive` (__Note: activating and deactivating virtualenv can be different on different platforms, check virtualenv docs for more info__). It is assumed that all the dependencies have been installed.
 
 ## Options
 
