@@ -1,0 +1,8 @@
+*.pyc
+.coverage
+debug.log
+venv/
+.vscode/
+.pytest_cache/
+*.pdf
+tests/__pycache__/

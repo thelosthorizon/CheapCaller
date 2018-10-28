@@ -1,0 +1,32 @@
+{
+    "version": 1,
+    "disable_existing_loggers": true,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+        },
+        "complex": {
+            "format": "%(asctime)s - %(levelname)s - File: %(filename)s - %(funcName)s() - Line: %(lineno)d -  %(message)s"
+        }
+
+    },
+    "handlers": {
+        "screen": {
+            "level": "WARNING",
+            "formatter": "simple",
+            "class": "logging.StreamHandler"
+        }
+    },
+    "loggers": {
+        "": {
+            "handlers": [],
+            "level": "NOTSET",
+            "propagate": false
+        },
+        "test": {
+            "handlers": ["screen"],
+            "level": "DEBUG",
+            "propagate": false
+        }
+    }
+}
