@@ -21,16 +21,17 @@ def parse(args):
         metavar="<phonenumber>",
         action="store",
         help="""
-            Phone number that you would like to call.
+            Phone number that you would like to find
+            the cheapest operator for.
             """
     )
     parser.add_argument(
         "operatordir",
         action="store",
-        metavar="<directory>",
+        metavar="<path>",
         help="""
-            Path to top level of a directory where to look for
-            operator files.
+            Path to top level of a directory from where to look for
+            operator files recursively.
             """
     )
     parser.add_argument(

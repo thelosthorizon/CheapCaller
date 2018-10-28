@@ -35,10 +35,11 @@ def main():
             "%s is not valid, exiting", args.get("phoneno")
         )
         sys.exit(1)
-    # Get all the extensions excluding first digit
+    # Get all the extensions starting from the full phonenumber
+    # working backwards to the first digit in phone number
     extensions = helpers.gen_right_triangle(phoneno)
     # Operator data processing pipeline
-    # find all the operatos files
+    # find all the operator files
     filepaths = helpers.gen_find(
         args.get("pattern"),
         args.get("operatordir")
@@ -48,12 +49,10 @@ def main():
     dictseq = helpers.open_files(filepaths)
     # each dict now has two items {"name": operator name, "source": sequence of lines}
     dictseq = helpers.map_from_fileobj_to_lines(dictseq)
-    # we start filtering now, each dict now has two items
-    # {"name": operator name, "source": lines that start with first phone digit}
-    dictseq = helpers.filter_using_startswith(dictseq, phoneno[0])
     # We get the cheapest per operator
     cheapest_per_operator = helpers.get_cheapest_per_operator(
-        dictseq, extensions
+        dictseq,
+        extensions
     )
     if not cheapest_per_operator:
         logger.error("No match for given number in any operators, exiting")

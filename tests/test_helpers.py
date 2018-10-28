@@ -40,7 +40,7 @@ class TestHelpers(unittest.TestCase):
     def test_ok__read_logging_conf_file_no_input(self):
         # Test the default behavior
         # Two handlers: screen(level:INFO), rotatingfilehandler(level:debug)
-        # cheap_caller logger's log level is DEBUG
+        # cheap_caller logger"s log level is DEBUG
         helpers.read_logging_conf_file()
         logger = logging.getLogger("cheap_caller")
         self.assertEqual(logger.level, logging.DEBUG)
@@ -85,8 +85,8 @@ class TestHelpers(unittest.TestCase):
         self.assertEqual(
             list(out),
             [
-                '/home/sulav/personal_stuffs/CheapCaller/tests/data/test_data1.txt',
-                '/home/sulav/personal_stuffs/CheapCaller/tests/data/test_data2.txt',
+                "/home/sulav/personal_stuffs/CheapCaller/tests/data/test_data1.txt",
+                "/home/sulav/personal_stuffs/CheapCaller/tests/data/test_data2.txt",
             ]
         )
 
@@ -109,7 +109,7 @@ class TestHelpers(unittest.TestCase):
     def test_ok__gen_right_triangle(self):
         # Test for expected output for a given string
         out = helpers.gen_right_triangle("1234")
-        self.assertListEqual(out, ["12", "123", "1234"])
+        self.assertListEqual(out, ["1234", "123", "12", "1"])
 
     def test_ok__remove_leading_plus_and_zeros(self):
         # Test that + and 00 are stripped for a given string
@@ -150,23 +150,6 @@ class TestHelpers(unittest.TestCase):
                 [["4673", "0.9"], ["46732", "1.1"],  ["467321", "0.5"], ["1234", "0.2"]]
             )
 
-    def test_ok__filter_using_startswith(self):
-        # Test for output with a prefix that exists in test data
-        # and a prefix that does not
-        inputs = ["123", "456"]
-        outputs = [[["1234", "0.2"]], []]
-        zipped = zip(inputs, outputs)
-        with open(self.test_operator_file1) as file_obj:
-            lines = helpers.gen_lines("something", file_obj)
-            dictseq = ({"source": lines, "name": "something"} for _ in xrange(1))
-            for val in zipped:
-                out = helpers.filter_using_startswith(dictseq, val[0])
-                for adict in out:
-                    self.assertListEqual(
-                        list(adict["source"]),
-                        val[1]
-                    )
-
     def test_ok__cheapest_per_operator(self):
         # Check that for two given test operator files
         # a dict with expected test operator and price is returned
@@ -182,15 +165,15 @@ class TestHelpers(unittest.TestCase):
         )
         self.assertDictEqual(
             out,
-            {"test_data1": 0.5, "test_data2": 1.1}
+            {"test_data1": ["467321", "0.5"], "test_data2": ["46732", "1.1"]}
         )
 
     def test_ok__get_cheapest(self):
         # Test that for a given dict containing cheapest per operator data
         # a tuple with expected test operator and price is returned
-        input_dict = {"test_data1": 0.5, "test_data2": 1.1}
+        input_dict = {"test_data1": ["46","0.5"], "test_data2": ["462", "1.1"]}
         out = helpers.get_cheapest(input_dict)
-        self.assertTupleEqual(out, ("test_data1", 0.5))
+        self.assertTupleEqual(out, ("test_data1", "0.5"))
 
 
 

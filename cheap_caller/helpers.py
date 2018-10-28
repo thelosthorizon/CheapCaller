@@ -91,23 +91,23 @@ def remove_leading_plus_and_zeros(string_to_be_curated):
 def gen_right_triangle(input_string):
     """Builds a list containing elements that builds right triangle
     12345 would be:
-
-    12
-    123
-    1234
     12345
+    1234
+    123
+    12
+    1
 
     Arguments:
         input_string {str} -- input string
 
     Returns:
         list -- list with all possible extensions
-        e.g. a 12345 would return [12, 123, 1234, 12345]
+        e.g. a 12345 would return [12345, 1234, 123, 12, 1]
     """
-    out = []
-    for index in xrange(2, len(input_string)+1):
-        out.append("".join(input_string[:index]))
-    return out
+    out = [
+        input_string[:index] for index in xrange(1, len(input_string)+1)
+    ]
+    return out[::-1]
 
 def sanitize_and_validate_phoneno(phoneno):
     """Sanitize a phone number, strips off +, - and 00
@@ -177,7 +177,7 @@ def gen_lines(name, source):
         # We only care about first two values
         line_splitted = line.split(",")[:2]
         if not len(line_splitted) == 2:
-            LOGGER.error(
+            LOGGER.warning(
                 "Ignoring %s line in %s,"
                 " not a comma separated extension and price",
                 line, name
@@ -192,7 +192,7 @@ def gen_lines(name, source):
             [float(val) for val in line_splitted]
         except ValueError:
             # To ignore invalid lines
-            LOGGER.error(
+            LOGGER.warning(
                 "Ignoring %s line in %s,"
                 " not a comma separated extension and price",
                 line, name
@@ -212,49 +212,48 @@ def map_from_fileobj_to_lines(dictseq):
         a_dict["source"] = gen_lines(a_dict["name"], a_dict["source"])
         yield a_dict
 
-def filter_using_startswith(dictseq, pattern):
-    """Filter sequence of lines in "source" item for each dict in dictseq
-    using string startswith function and yield sequence of dicts
-
-    Arguments:
-        dictseq {obj} -- sequence of dict
-        pattern {str} -- desired pattern
-    """
-    for a_dict in dictseq:
-        # only lines that startwith pattern
-        a_dict["source"] = (line for line in a_dict["source"] if line[0].startswith(pattern))
-        yield a_dict
 
 def get_cheapest_per_operator(dictseq, extensions):
     """Get cheapest call rate per operator for a given phoneno
 
+    Filter sequence of lines in "source" item for each dict in dictseq
+    using each extension in extensions and return a dict containing
+    cheapest rate per operator
+
     Arguments:
-        dictseq {obj} --sequence of dict
+        dictseq {obj} -- sequence of dict
         extensions {list} -- list containing extensions
-                             returned by get_possible_extension()
+                             returned by gen_right_triangle()
 
     Returns:
-        dict -- key = operator name
-                value = call rate
+        dict -- multiple items, each item represents an operator
+                key = operator name; value = call rate
     """
     cheapest_per_operator = {}
     # Check for each operator data
     for adict in dictseq:
-        cheapest_per_operator[adict["name"]] = []
-        for line in adict["source"]:
-            for extension in extensions:
-                # at the end of this loop
-                # cheapest_per_operator will have matching lines
-                if line[0] == extension: # do exact match
-                    cheapest_per_operator[adict["name"]].append(float(line[1]))
-                    LOGGER.debug(
-                        "Found a matching extension: %s for %s, price: %s",
-                        extension, adict["name"], float(line[1])
-                    )
-    # get the cheapest now
-    return dict(
-        (k, min(v)) for k, v in cheapest_per_operator.iteritems() if v
-    )
+        # adict represents an operator
+        name = adict.get("name")
+        # Have to use list() or we cant loop over each extension
+        lines = list(adict["source"])
+        for extension in extensions:
+            matching = [
+                line for line in lines if line[0] == extension
+            ]
+            # since we start from phone number and work our way back
+            # to first digit, we can break if matching is non-empty
+            # and work with another operator dict data
+            if matching:
+                LOGGER.debug(
+                    "Matching lines for operator: %s, extension: %s, lines: %s",
+                    name, extension, matching
+                )
+                # get the minimum value
+                cheapest_per_operator[name] = min(
+                    matching, key=lambda i: i[1]
+                )
+                break
+    return cheapest_per_operator
 
 def get_cheapest(adict):
     """Get cheapest operator and rate for a given phoneno
@@ -266,9 +265,9 @@ def get_cheapest(adict):
         tuple -- cheapest operatorname and call rate
     """
     # get the cheapest prices
-    cheapest_price = min(adict.values())
+    cheapest_price = min(adict.values(), key=lambda i: i[1])
     # find that value in the dict
     # return tuple -- (operator, price)
     for key, value in adict.iteritems():
         if value == cheapest_price:
-            return (key, value)
+            return (key, value[1])

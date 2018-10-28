@@ -31,7 +31,7 @@ Find the cheapest operator to call with for a given phone numer.
 ## Steps
 
 1. Get the code
-Clone the CheapCaller repository:
+Clone the CheapCaller repository: https://github.com/thelosthorizon/CheapCaller.git
 
 2. Install dependencies
 
